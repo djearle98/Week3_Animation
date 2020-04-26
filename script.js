@@ -1,7 +1,7 @@
 var allPresets = [];
 var obj = document.getElementById("obj");
 var currentPosition, startPosition, endPosition;
-var animationDuration = 3000; // in ms
+var animationDuration = 1000; // in ms
 var animating = false;
 var interval;
 var frameNum = 0;
@@ -35,6 +35,7 @@ function addButton(p) {
 function animate(p) {
   startPosition = currentPosition;
   endPosition = p.position;
+  clearInterval(interval);
   interval = setInterval(frame, frameDuration);
   frameNum = 0;
   animating = true;
@@ -43,7 +44,6 @@ function animate(p) {
 function frame(){
   //Calculate position value
   var percentDone = frameDuration*frameNum/animationDuration;
-  console.log("FRAME");
   if (percentDone <= 1 && animating == true) {
   	frameNum++;
     currentPosition = linearAnimation(percentDone);
@@ -77,7 +77,11 @@ var invPercentDone = 1-percentDone;
 
 }
 
-var p1 = new Preset(100, 200, 100, 50);
-var p2 = new Preset(50, 50, 300, 10);
+var p1 = new Preset(475, 475, 12.5, 12.5);
+var p2 = new Preset(450, 450, 25, 25);
+var p3 = new Preset(100, 45, 200, 100);
+var p4 = new Preset(30, 30, 400, 400);
+var p4 = new Preset(50, 400, 225, 50);
+
 currentPosition = p1.position;
 paint();
