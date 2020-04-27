@@ -1,87 +1,95 @@
-var allPresets = [];
+/*VARIABLES*/
+//	HTML Objects
 var obj = document.getElementById("obj");
-var currentPosition, startPosition, endPosition;
-var animationDuration = 1000; // in ms
-var animating = false;
-var interval;
-var frameNum = 0;
-var frameDuration = 10; //ms
 
-class Preset {
-  constructor(width, height, left, top) {
-    this.position = new Position(width, height, left, top)
-    this.pNum = allPresets.push(this) - 1;
-    addButton(this);
+/*CLASSES*/
+class Animation {
+  constructor(obj, animType, frameDur, animDur) {
+    this.obj = obj;
+    if (true){  //animType == "Linear"
+    	this.animAlgorithm = this.linear;
+    }
+    this.frameDur = frameDur; //ms
+    this.animDur = animDur; //ms
+    
+    this.animating = false;
+    this.frameNum = 0;
+    this.clockTrigger = null;
+    this.startData = [];
+    this.curData = [];
+    this.endData = [];
+    this.percentDone = 0;
+
   }
-}
-class Position {
-	constructor (width, height, left, top) {
-  	this.width = width;
-    this.height = height;
-    this.left = left;
-    this.top = top;
+  anim(endData) {
+  	this.endData = endData;
+    this.startData = this.curData;
+    this.frameNum = 0;
+  	this.animating = true;
+
+		this.calcFrame();
+	}
+  calcFrame(){
+    this.clockTrigger = requestAnimationFrame(animationHandler, this.frameDur);
+    this.percentDone = (this.frameDur*this.frameNum)/this.animDur;
+    if (this.percentDone <= 1) {
+      this.frameNum++;
+      this.curData = this.animAlgorithm();
+      this.paint();
+    } /*else {
+      cancelAnimationFrame(this.clockTrigger);
+    } */
+ 
   }
+	linear() {
+    var invPercentDone = 1-this.percentDone;
+    var result = [];
+    for(var i=0; i<this.endData.length; i++) { 
+    	result.push(this.startData[i]*invPercentDone + this.endData[i]*this.percentDone);
+    }
+    return result;
+  }
+  paint(){
+    //update the object
+    this.obj.style.width = this.curData[0] + "px";
+    this.obj.style.height = this.curData[1] + "px";
+    this.obj.style.left = this.curData[2] + "px";
+    this.obj.style.top = this.curData[3] + "px";
+  }
+  init(data){
+  	this.curData = data;
+    this.paint();
+  }
+
 }
 
-function addButton(p) {
-  var button = document.createElement("button");
+/*FUNCTIONS*/
+var presetButtons = [];
+function addPreset(data) {
+  var i = presetButtons.push(document.createElement("button"))-1;
+  var button = presetButtons[i];
   button.setAttribute("type", "button");
-  button.addEventListener("click", function(){animate(p);}, false);
-  var text = document.createTextNode("Preset " + p.pNum);
+  button.addEventListener("click", function(){onclickHandler(data);}, false);
+  var text = document.createTextNode("Preset: ["+data+"]");
   button.appendChild(text);
   document.body.appendChild(button);
 }
 
-function animate(p) {
-  startPosition = currentPosition;
-  endPosition = p.position;
-  clearInterval(interval);
-  interval = setInterval(frame, frameDuration);
-  frameNum = 0;
-  animating = true;
+function onclickHandler(data) {
+	animFrameSize.anim(data)
 }
-
-function frame(){
-  //Calculate position value
-  var percentDone = frameDuration*frameNum/animationDuration;
-  if (percentDone <= 1 && animating == true) {
-  	frameNum++;
-    currentPosition = linearAnimation(percentDone);
-	  paint();
-  } else {
-    clearInterval(interval);
-    animating = false;
-  }
+function animationHandler(){
+	animFrameSize.calcFrame();
+  console.log("FRAME");
 }
-
-function paint(){
-	//update the canvas
-	obj.style.width = currentPosition.width + "px";
-  obj.style.height = currentPosition.height + "px";
-  obj.style.left = currentPosition.left + "px";
-  obj.style.top = currentPosition.top + "px";
-}
-
-function linearAnimation(percentDone) {
-
-var invPercentDone = 1-percentDone;
-  /* currentPosition.width = startPosition.width*invPercentDone + endPosition.width*percentDone;
-  currentPosition.height = startPosition.height*invPercentDone + endPosition.height*percentDone;
-  currentPosition.left = startPosition.left*invPercentDone + endPosition.left*percentDone;
-  */
-  var width = startPosition.width*invPercentDone + endPosition.width*percentDone;
-  var height = startPosition.height*invPercentDone + endPosition.height*percentDone;
-  var left = startPosition.left*invPercentDone + endPosition.left*percentDone;
-  var top = startPosition.top*invPercentDone + endPosition.top*percentDone;
-  return new Position(width, height, left, top);
-
-}
-
-var p1 = new Preset(475, 475, 12.5, 12.5);
-var p2 = new Preset(450, 450, 25, 25);
-var p3 = new Preset(100, 45, 200, 100);
-var p4 = new Preset(30, 30, 400, 400);
-var p4 = new Preset(50, 400, 225, 50);
-
-currentPosition = p1.position;
-paint();
+var animFrameSize = new Animation(obj, "Linear", 10, 1000)
+/*
+animFrameSize.addParameter("width", "px");
+animFrameSize.addParameter("height", "px");
+animFrameSize.addParameter("left", "px");
+animFrameSize.addParameter("top", "px");
+*/
+animFrameSize.init([100, 100, 200, 200]);
+addPreset([300, 300, 10, 10]);
+addPreset([100, 600, 70, 100]);
+addPreset([30, 10, 50, 400]);
