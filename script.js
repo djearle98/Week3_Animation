@@ -1,8 +1,12 @@
 /*VARIABLES*/
-//	HTML Objects
 var obj = document.getElementById("obj");
+var presetButtons = [];
 
 /*CLASSES*/
+//TODO: Breakout ease-in/ease-out envelope and add this setting to constructor
+//TODO: Make animation settings editable via setters
+//TODO: access CSS like this: 
+	//element.style.setProperty("background-color", "red");
 class Animation {
   constructor(obj, animType, frameDur, animDur) {
     this.obj = obj;
@@ -25,27 +29,25 @@ class Animation {
   	this.endData = endData;
     this.startData = this.curData;
     this.frameNum = 0;
-  	this.animating = true;
+		cancelAnimationFrame(this.clockTrigger);
 
 		this.calcFrame();
 	}
   calcFrame(){
-    this.clockTrigger = requestAnimationFrame(animationHandler, this.frameDur);
     this.percentDone = (this.frameDur*this.frameNum)/this.animDur;
     if (this.percentDone <= 1) {
+    	this.clockTrigger = requestAnimationFrame(animationHandler);
       this.frameNum++;
       this.curData = this.animAlgorithm();
       this.paint();
-    } /*else {
-      cancelAnimationFrame(this.clockTrigger);
-    } */
- 
+    }
   }
 	linear() {
-    var invPercentDone = 1-this.percentDone;
+  	var progress = 1-(Math.cos(this.percentDone*Math.PI)+1)/2;
+    var invProgress = 1-progress;
     var result = [];
     for(var i=0; i<this.endData.length; i++) { 
-    	result.push(this.startData[i]*invPercentDone + this.endData[i]*this.percentDone);
+    	result.push(this.startData[i]*invProgress + this.endData[i]*progress);
     }
     return result;
   }
@@ -60,11 +62,9 @@ class Animation {
   	this.curData = data;
     this.paint();
   }
-
 }
 
 /*FUNCTIONS*/
-var presetButtons = [];
 function addPreset(data) {
   var i = presetButtons.push(document.createElement("button"))-1;
   var button = presetButtons[i];
@@ -74,7 +74,6 @@ function addPreset(data) {
   button.appendChild(text);
   document.body.appendChild(button);
 }
-
 function onclickHandler(data) {
 	animFrameSize.anim(data)
 }
@@ -82,14 +81,16 @@ function animationHandler(){
 	animFrameSize.calcFrame();
   console.log("FRAME");
 }
-var animFrameSize = new Animation(obj, "Linear", 10, 1000)
-/*
+
+/*EXECUTION*/
+var animFrameSize = new Animation(obj, "Linear", 10, 800);
+/* TODO: Add functionality for addParameters in the class w/ customizable units. 
 animFrameSize.addParameter("width", "px");
 animFrameSize.addParameter("height", "px");
 animFrameSize.addParameter("left", "px");
 animFrameSize.addParameter("top", "px");
 */
-animFrameSize.init([100, 100, 200, 200]);
-addPreset([300, 300, 10, 10]);
-addPreset([100, 600, 70, 100]);
-addPreset([30, 10, 50, 400]);
+animFrameSize.init([482, 482, 8, 8]);
+addPreset([482, 482, 8, 8]);
+addPreset([450, 450, 25, 25]);
+addPreset([200, 450, 150, 25]);
