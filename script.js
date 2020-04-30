@@ -19,7 +19,7 @@ function changeCSS(data){
   }
 }
 /*EXECUTION*/
-addPreset(["95%", "95%", "2.5%", "2.5%", "0px", "#f00"]);
-addPreset(["90%", "90%", "5%", "5%", "15px", "#0ff"]);
-addPreset(["50%", "90%", "25%", "5%", "50px", "#808080"]);
+addPreset(["95%", "95%", "2.5%", "2.5%", "50%", "#FF99C8"]);
+addPreset(["90%", "90%", "5%", "5%", "15px", "#A288E3"]);
+addPreset(["50%", "90%", "25%", "5%", "50px", "#75DDDD"]);
 document.getElementsByTagName("button")[0].click();
