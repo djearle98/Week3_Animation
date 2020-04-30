@@ -6,4 +6,8 @@
 }
 #obj {
   position: absolute;
+  background-color: #000;
+  transition-property: width, height, background-color, border-radius, left, top;
+  transition-duration: 2s;
+  transition-timing-function: ease;
 }
