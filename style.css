@@ -1,13 +1,87 @@
-#canvas {
-  width: 500px;
-  height: 500px;
-  position: relative;
-  border: solid;
+:root {
+  --canvas-width: calc(100vw - 2*var(--canvas-margin));
+  --canvas-height: calc(100vh - 2*var(--canvas-margin));
+  --canvas-margin: 30px;
+  --transition-time: 1s;
+  --button-shelf-height: 70px;
+  --node-size: 150px;
 }
-#obj {
+.node{
+  transition: all var(--transition-time);
   position: absolute;
-  background-color: #000;
-  transition-property: width, height, background-color, border-radius, left, top;
-  transition-duration: 2s;
-  transition-timing-function: ease;
+  margin: 0;
+  background-color: black;
+  z-index: 0;
+  left: 50%;
+  top: 50%;
+  width: var(--node-size);
+  height: var(--node-size);
+  transform: translateY(-50%) translateX(-50%);
+
+  border-radius: 50%;
+  /*transform: translate (-50%, -50%);*/
+}
+.node:hover{
+  transform: scale(1.07, 1.07) translateX(-50%) translateY(-50%);
+  transition: all var(--transition-time);
+  position: absolute;
+
+}
+.background {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background-color: white;
+  border-radius: 50%;
+  transition: all var(--transition-time);
+}
+.background::after {
+  content: "";
+  border-radius: 50%;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-color: #2F9C89;
+  transform: translate(6px, 6px);
+  transition: all var(--transition-time);
+  z-index: -1;
+
+}
+.background:hover::after{
+  position: absolute;
+  transform: translate(12px, 12px);
+}
+
+.node-window{
+  position: relative;
+  width: 100%;
+  height: calc(100% - var(--button-shelf-height));
+}
+.button-shelf{
+  position: relative;
+  height: var(--button-shelf-height);
+  bottom: 0;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+#canvas {
+  background-color: #A1E7DA;
+  width: var(--canvas-width);
+  height: var(--canvas-height);
+  margin: auto;
+  transition: all var(--transition-time);
+  border-radius: 30px;
+  margin-top: var(--canvas-margin);
+}
+.button {
+  background-color: white;
+  border-radius: 50%;
+  display: inline-block;
+  padding: 12px;
+  margin: auto;
+}
+body{
+  margin: 0;
 }
